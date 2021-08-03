@@ -6,12 +6,9 @@
 
 let brushHue, shouldDraw, priorX = 0, priorY = 0, strokeColor
   // Global variable to store the classifier
-let classifier;
+let classifier
 let confidence
-let button;
 let result
-// Label
-let label = 'listening...';
 // Teachable Machine model URL:
 let soundModel = 'https://teachablemachine.withgoogle.com/models/nAknZzeF5/';
 let colorBox
@@ -33,42 +30,40 @@ function setup() {
   strokeWeight(6);
   classifySound()
   strokeColor = color(0,0,0)
-  // Draw the background to
+  // define the properties of the highlight box
   colorBox = {
     'x': 30,
     'y': 416,
     'w': 50,
     'h': 30,
+    // start with white
     'color': color(0,0,100)
   }
 }
 
 function draw() {
-  //chooseColors();
+  //set default stroke color and weight
   stroke('black')
   strokeWeight(1)
   
-  //line(0, 370, width, 370)
+  //draw when mouse pressed
   if (mouseIsPressed) {
-    // Pick one of the three behaviors below:
-    // rect(mouseX, mouseY, 15, 15); // Draw a 15 x 15 sized square at mouseX and mouseY
-    // ellipse(random(width), random(height), 30, 30);
     stroke(strokeColor)
     line(priorX, priorY, mouseX, mouseY);
-    // line(width-priorX, height-priorY, width-mouseX, height-mouseY);
+
   }
 
-  // Store the mouseX and mouseY from this frame in order to use them next
-  // frame - remember from the DVD lesson that the draw loop runs once every
-  // frame.
+  // Store the mouseX and mouseY from this frame in order to use them next frame
   priorX = mouseX;
   priorY = mouseY;
+  // no stroke for the bottom white menu
+  // in draw() to separate from the drawing background
   noStroke()
 
   fill('white')
   rect(width/2, height - 25, width, 50)
   
-  
+  // draw the color labels
   fill('black')
   text("Red", 20, 420)
   text("Blue", 80, 420)
@@ -89,13 +84,7 @@ function mouseReleased() {
 function keyPressed() {
   background(95);
 }
-/* A function that sets the stroke and fill of our "paint brush". */
-function chooseColors() {
-  fill(brushHue, 50, 80);
-  strokeWeight(5);
-  stroke(brushHue, 50, 80);
-  
-}
+
 
 function gotResult(error, results) {
   if (error) {
@@ -110,9 +99,10 @@ function gotResult(error, results) {
 }
 
 function classifySound() {
-  
+  // commit to a color when confidence is larger than .9
   classifier.classify(gotResult);
   if (result == "Red" && confidence >= 0.9) {
+    //change stroke color and colorbox color/x
     strokeColor = color(0, 100, 100)
     colorBox.x = 30
     colorBox.color = strokeColor
